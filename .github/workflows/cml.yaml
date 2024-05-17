@@ -1,20 +1,31 @@
-name: wine-prediction
-on: [push]
+name: CML Workflow
+
+on:
+  push:
+    branches:
+      - main  # Run the workflow when there is a push to the main branch
+
 jobs:
   run:
     runs-on: ubuntu-latest
-    # optionally use a convenient Ubuntu LTS + DVC + CML image
-    container: ghcr.io/iterative/cml:0-dvc2-base1
-    steps:
-      - uses: actions/checkout@v3
-      - uses: iterative/setup-cml@v1
-      - name: Train model
-        env:
-          repo_token: ${{ secrets.WINE_TOKEN }}
-        run: |
-          # Your ML workflow goes here
-          pip install -r requirements.txt
-          python train.py
 
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'  # Specify the Python version you need
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run machine learning script
+        run: |
+          python train.py
           echo "Model Metrics"
           cat metrics.txt
+
