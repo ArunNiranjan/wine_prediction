@@ -1,25 +1,18 @@
-name: CML Workflow
-
-on:
-  push:
-    branches:
-      - main  # Run the workflow when there is a push to the main branch
-
+name: model-training
+on: [push]
 jobs:
   run:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Install dependencies
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+      - uses: iterative/setup-cml@v1
+      - name: Train model
+        env:
+          REPO_TOKEN: ${{ secrets.WINE_TOKEN }}
         run: |
-          python -m pip install --upgrade pip
           pip install -r requirements.txt
-
-      - name: Run machine learning script
-        run: |
           python train.py
-          echo "Model Metrics"
+          echo "Model metrics"
           cat metrics.txt
 
